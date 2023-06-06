@@ -29,6 +29,7 @@ namespace Data
 
         float x = 0;
         float y = 0;
+        float z = 0;
 
         int zeldaDungeonId;
 
@@ -39,7 +40,22 @@ namespace Data
     };
 
     // https://github.com/d4mation/botw-unexplored-viewer/blob/master/assets/js/map-locations.js warps
+    struct KorokEscort{
+        uint32_t hash;
 
+        std::string internalName;
+
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        int zeldaDungeonId;
+
+        Data::KorokPath* path = nullptr;
+
+        KorokEscort(uint32_t hash, const std::string& internalName, float x, float y, int zeldaDungeonId) :
+        hash(hash), internalName(internalName), x(x), y(y), zeldaDungeonId(zeldaDungeonId) {};
+    };
     struct Shrine
     {
         uint32_t hash;
@@ -48,11 +64,24 @@ namespace Data
 
         float x = 0;
         float y = 0;
+        float z=0;
 
         Shrine(uint32_t hash, const std::string& displayName, float x, float y) :
             hash(hash), x(x), y(y) {};
     };
+    struct Lightroot
+    {
+        uint32_t hash;
 
+        std::string displayName;
+
+        float x = 0;
+        float y = 0;
+        float z=0;
+
+        Lightroot(uint32_t hash, const std::string& displayName, float x, float y) :
+                hash(hash), x(x), y(y) {};
+    };
     // From https://github.com/MrCheeze/botw-tools/blob/master/gamedata/s32_data_0.xml
     // and https://objmap.zeldamods.org/#/map/z3,0,0
 
@@ -90,6 +119,7 @@ namespace Data
 
         float x = 0;
         float y = 0;
+        float z = 0;
 
         Hinox(uint32_t hash, float x, float y) :
             hash(hash), x(x), y(y) {};
@@ -103,6 +133,7 @@ namespace Data
 
         float x = 0;
         float y = 0;
+        float z = 0;
 
         Talus(uint32_t hash, float x, float y) :
             hash(hash), x(x), y(y) {};
@@ -116,11 +147,44 @@ namespace Data
 
         float x = 0;
         float y = 0;
+        float z = 0;
 
         Molduga(uint32_t hash, float x, float y) :
             hash(hash), x(x), y(y) {};
     };
+    struct Frox
+    {
+        uint32_t hash;
 
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        Frox(uint32_t hash, float x, float y) :
+                hash(hash), x(x), y(y) {};
+    };
+    struct FluxConstruct
+    {
+        uint32_t hash;
+
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        FluxConstruct(uint32_t hash, float x, float y) :
+                hash(hash), x(x), y(y) {};
+    };
+    struct Gleeok
+    {
+        uint32_t hash;
+
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        Gleeok(uint32_t hash, float x, float y) :
+                hash(hash), x(x), y(y) {};
+    };
     struct KorokInfo
     {
         std::string text;
