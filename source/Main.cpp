@@ -38,10 +38,10 @@ static void deinitNxLink()
 void cleanUp()
 {
     // Save settings
-    if (!SavefileIO::DirectoryExists("sdmc:/switch/botw-unexplored"))
-        mkdir("sdmc:/switch/botw-unexplored", 0777);
+    if (!SavefileIO::DirectoryExists("sdmc:/switch/totk-unexplored"))
+        mkdir("sdmc:/switch/totk-unexplored", 0777);
 
-    std::ofstream file("sdmc:/switch/botw-unexplored/settings.txt");
+    std::ofstream file("sdmc:/switch/totk-unexplored/settings.txt");
     if (file.is_open())
     {
         file << Map::m_CameraPosition.x << "\n";
@@ -57,7 +57,7 @@ void cleanUp()
     // Save marked koroks
     if (SavefileIO::GameIsRunning)
     {
-        std::ofstream koroksFile("sdmc:/switch/botw-unexplored/koroks.txt");
+        std::ofstream koroksFile("sdmc:/switch/totk-unexplored/koroks.txt");
         if (koroksFile.is_open())
         {
             for (int i = 0; i < Data::KoroksCount; i++)
@@ -73,7 +73,7 @@ void cleanUp()
     else
     {
         // Else delete the file so only the actually found koroks are displayed
-        if (remove("sdmc:/switch/botw-unexplored/koroks.txt") != 0)
+        if (remove("sdmc:/switch/totk-unexplored/koroks.txt") != 0)
             Log("Couldn't delete koroks.txt. It probably doesn't exist");
         else
             Log("koroks.txt successfully deleted to avoid desync");
@@ -136,7 +136,7 @@ int main()
     Map::m_Pad = &pad;
 
     // Load settings if they exist
-    std::ifstream settingsFile("sdmc:/switch/botw-unexplored/settings.txt");
+    std::ifstream settingsFile("sdmc:/switch/totk-unexplored/settings.txt");
     if (settingsFile.is_open())
     {
         std::string line;
@@ -199,13 +199,13 @@ int main()
             hasLoadedSave = true;
             Log("LoadGamesave() status:", SavefileIO::LoadGamesave() ? "true" : "false");
 
-            Map::UpdateMapObjects();
+            Map::UpdateMapObjects(0);
 
             // Load manually checked koroks (but only if the game is running)
             // Override the checking from the savefile
             if (SavefileIO::GameIsRunning)
             {
-                std::ifstream koroksFile("sdmc:/switch/botw-unexplored/koroks.txt");
+                std::ifstream koroksFile("sdmc:/switch/totk-unexplored/koroks.txt");
                 if (koroksFile.is_open())
                 {
                     for (int i = 0; i < Data::KoroksCount; i++)

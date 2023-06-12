@@ -128,7 +128,7 @@ void Dialog::Update()
                     if (m_Type == DialogType::InvalidSavefile) 
                     {
                         SavefileIO::LoadGamesave(false, true);
-                        Map::UpdateMapObjects();
+                        Map::UpdateMapObjects(0);
                     } 
                     // else if (m_Type == DialogType::MasterModeChoose)
                     //     Map::m_ShouldLoadMastermodeFile = true;
@@ -178,7 +178,7 @@ void Dialog::Update()
             if (m_Type == DialogType::InvalidSavefile)
             {
                 SavefileIO::LoadGamesave(false, true);
-                Map::UpdateMapObjects();
+                Map::UpdateMapObjects(0);
             } 
                 
             // else if (m_Type == DialogType::MasterModeChoose)

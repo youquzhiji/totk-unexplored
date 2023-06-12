@@ -36,7 +36,7 @@ bool SavefileIO::LoadGamesave(bool loadMasterMode, bool chooseProfile)
             bool success = false;
             if (MasterModeFileExists) 
             {
-                std::string path = "save:/" + std::to_string(MostRecentMasterModeFile) + "/game_data.sav";
+                std::string path = "save:/slot_0"+ std::to_string(MostRecentMasterModeFile) + "/progress.sav";
                 success = ParseFile(path.c_str());
                 if (!success)
                     Log("Mastermode savefile failed to parse");
@@ -50,7 +50,7 @@ bool SavefileIO::LoadGamesave(bool loadMasterMode, bool chooseProfile)
         } else
             MasterModeFileLoaded = false;
 
-        std::string path = "save:/" + std::to_string(MostRecentNormalModeFile) + "/game_data.sav";
+        std::string path = "save:/slot_0"+ std::to_string(MostRecentNormalModeFile) + "/progress.sav";
         bool success = ParseFile(path.c_str());
         if (!success) 
         {
@@ -115,7 +115,8 @@ uint32_t SavefileIO::ReadU32(unsigned char *buffer, int offset)
 int SavefileIO::MountSavefile(bool openProfilePicker)
 {
     Result rc = 0;
-    u64 botwId = 0x01007ef00011e000;
+    u64 totkId = 0x0100f2c0115b6000;
+
     AccountUid uid = {0};
 
     MasterModeFileExists = false;   
@@ -132,7 +133,7 @@ int SavefileIO::MountSavefile(bool openProfilePicker)
 
         if (accountUidIsValid(&uid))
         {
-            Result rc = fsdevMountSaveData("save", botwId, uid);
+            Result rc = fsdevMountSaveData("save", totkId, uid);
             if (R_FAILED(rc))
             {
                 Log("Failed to mount save (cached user)");
@@ -220,7 +221,7 @@ int SavefileIO::MountSavefile(bool openProfilePicker)
     FsSaveDataInfo info;
     s64 total_entries = 0;
 
-    bool hasBotwSavedata = false;
+    bool hastotkSavedata = false;
 
     Result res = fsOpenSaveDataInfoReader(&reader, FsSaveDataSpaceId_User);
     if (R_FAILED(res)) {
@@ -235,11 +236,11 @@ int SavefileIO::MountSavefile(bool openProfilePicker)
         }
 
         if (info.save_data_type == FsSaveDataType_Account) {
-            // Check if the save is botw and belongs to the selected user
-            if (info.application_id == botwId && info.uid.uid[0] == uid.uid[0] && info.uid.uid[1] == uid.uid[1])
+            // Check if the save is totk and belongs to the selected user
+            if (info.application_id == totkId && info.uid.uid[0] == uid.uid[0] && info.uid.uid[1] == uid.uid[1])
             {
-                hasBotwSavedata = true;
-                Log("User has botw savedata");
+                hastotkSavedata = true;
+                Log("User has totk savedata");
                 break;
             }
         }
@@ -247,17 +248,17 @@ int SavefileIO::MountSavefile(bool openProfilePicker)
 
     fsSaveDataInfoReaderClose(&reader);
 
-    if (!hasBotwSavedata)
+    if (!hastotkSavedata)
     {
-        Log("User has no botw save data");
+        Log("User has no totk save data");
         NoSavefileForUser = true;
         return -2;
     }
 
-    rc = fsdevMountSaveDataReadOnly("save", botwId, uid);
+    rc = fsdevMountSaveDataReadOnly("save", totkId, uid);
     if (R_FAILED(rc))
     {
-        Log("Botw is running. Failed to mount save (or fsdevMountSaveDataReadOnly() failed, who knows)");
+        Log("totk is running. Failed to mount save (or fsdevMountSaveDataReadOnly() failed, who knows)");
         GameIsRunning = true;
 
         return -1;
@@ -293,11 +294,11 @@ bool SavefileIO::UnmountSavefile()
 bool SavefileIO::LoadBackup(bool masterMode)
 {
     std::string profileIdStr = std::to_string(AccountUid1) + " - " + std::to_string(AccountUid2);
-    std::string savesFolder = "sdmc:/switch/botw-unexplored/saves/" + profileIdStr + "/";
+    std::string savesFolder = "sdmc:/switch/totk-unexplored/saves/" + profileIdStr + "/";
 
-    if (!DirectoryExists("sdmc:/switch/botw-unexplored"))
+    if (!DirectoryExists("sdmc:/switch/totk-unexplored"))
         return false;
-    if (!DirectoryExists("sdmc:/switch/botw-unexplored/saves"))
+    if (!DirectoryExists("sdmc:/switch/totk-unexplored/saves"))
         return false;
     if (!DirectoryExists(savesFolder))
     {
@@ -315,7 +316,7 @@ bool SavefileIO::LoadBackup(bool masterMode)
     if (MostRecentMasterModeFile == -1 && masterMode)
         return false;
 
-    std::string savefilePath = savesFolder + std::to_string(!masterMode ? MostRecentNormalModeFile : MostRecentMasterModeFile) + "/game_data.sav";
+    std::string savefilePath = savesFolder +"slot_0"+ std::to_string(!masterMode ? MostRecentNormalModeFile : MostRecentMasterModeFile) + "/progress.sav";
 
     // Parse it
     return ParseFile(savefilePath.c_str());
@@ -341,11 +342,11 @@ uint32_t SavefileIO::GetSavefilePlaytime(const std::string& filepath)
 
     file.close();
 
-    uint32_t playtimeHash = 0x73c29681;
+    uint32_t playtimeHash = 0xe573f564;
     
     // Iterate to find the location of the hash
     uint32_t playtime = 0;
-    for (unsigned int offset = 0x0c; offset < fileSize - 4; offset += 8)
+    for (unsigned int offset = 0x28; offset < fileSize - 4; offset += 8)
     {
         // Read the hash
         uint32_t hashValue = ReadU32(buffer, offset);
@@ -357,7 +358,8 @@ uint32_t SavefileIO::GetSavefilePlaytime(const std::string& filepath)
     }
 
     delete buffer;
-
+    if(playtime==0)
+        Log("Failed to find playtime in savefile");
     return playtime;
 }
 
@@ -373,12 +375,14 @@ int SavefileIO::GetMostRecentSavefile(const std::string& dir, bool masterMode)
     {
         for (int i = 0; i <= 5; i++)
         {
-            std::string path = dir + std::to_string(i) + "/game_data.sav";
+            std::string path = dir +"slot_0"+ std::to_string(i) + "/progress.sav";
+            Log("Checking for savefile at: " + path);
             uint32_t playtime = GetSavefilePlaytime(path); // 0 = Save doesn't exist
 
             // If this file is more recent then the currently highest one
             if (playtime != 0 && playtime >= highestPlaytime) 
             {
+                Log("Found savefile with playtime: " + std::to_string(playtime) + " in slot " + std::to_string(i));
                 highestPlaytime = playtime;
                 mostRecentFile = i;
             }
@@ -386,20 +390,22 @@ int SavefileIO::GetMostRecentSavefile(const std::string& dir, bool masterMode)
 
         return mostRecentFile;
     }
-
+    //TODO
+    //as currently there's no master mode, just return 5
+    return 5;
     // Master mode
-    for (int i = 6; i <= 7; i++)
-    {
-        std::string path = dir + std::to_string(i) + "/game_data.sav";
-        uint32_t playtime = GetSavefilePlaytime(path); // 0 = Save doesn't exist
-
-        // If this file is more recent then the currently highest one
-        if (playtime != 0 && playtime >= highestPlaytime) 
-        {
-            highestPlaytime = playtime;
-            mostRecentFile = i;
-        }
-    }
+//    for (int i = 6; i <= 7; i++)
+//    {
+//        std::string path = dir +"slot_0"+ std::to_string(i) + "/progress.sav";
+//        uint32_t playtime = GetSavefilePlaytime(path); // 0 = Save doesn't exist
+//
+//        // If this file is more recent then the currently highest one
+//        if (playtime != 0 && playtime >= highestPlaytime)
+//        {
+//            highestPlaytime = playtime;
+//            mostRecentFile = i;
+//        }
+//    }
 
     if (mostRecentFile != -1)
         MasterModeFileExists = true;
@@ -418,25 +424,25 @@ void SavefileIO::CopySavefiles()
         savefileFolders.push_back(std::to_string(MostRecentMasterModeFile));
 
     std::string profileIdStr = std::to_string(AccountUid1) + " - " + std::to_string(AccountUid2);
-    std::string savesFolder = "sdmc:/switch/botw-unexplored/saves/" + profileIdStr;
+    std::string savesFolder = "sdmc:/switch/totk-unexplored/saves/" + profileIdStr;
 
-    if (!DirectoryExists("sdmc:/switch/botw-unexplored"))
-        mkdir("sdmc:/switch/botw-unexplored", 0777);
-    if (!DirectoryExists("sdmc:/switch/botw-unexplored/saves"))
-        mkdir("sdmc:/switch/botw-unexplored/saves", 0777);
+    if (!DirectoryExists("sdmc:/switch/totk-unexplored"))
+        mkdir("sdmc:/switch/totk-unexplored", 0777);
+    if (!DirectoryExists("sdmc:/switch/totk-unexplored/saves"))
+        mkdir("sdmc:/switch/totk-unexplored/saves", 0777);
     if (!DirectoryExists(savesFolder))
         mkdir(savesFolder.c_str(), 0777);
 
     for (unsigned int i = 0; i < savefileFolders.size(); i++)
     {
         // Create the destination folder if it doesn't exist
-        if (!DirectoryExists(savesFolder + "/" + savefileFolders[i]))
-            mkdir(std::string(savesFolder + "/" + savefileFolders[i]).c_str(), 0777);
+        if (!DirectoryExists(savesFolder +"slot_0"+ savefileFolders[i]))
+            mkdir(std::string(savesFolder +"slot_0"+ savefileFolders[i]).c_str(), 0777);
 
         // Copy the savefiles
-        std::string target = savesFolder + "/" + savefileFolders[i] + "/game_data.sav";
+        std::string target = savesFolder + "slot_0" + savefileFolders[i] + "/progress.sav";
 
-        CopyFile("save:/" + savefileFolders[i] + "/game_data.sav", target);
+        CopyFile("save:/slot_0"+ savefileFolders[i] + "/progress.sav", target);
 
         Log("Copied savefile " + savefileFolders[i] + " to " + target);
     }
@@ -550,10 +556,10 @@ bool SavefileIO::ParseFile(const char *filepath)
 
     file.close();
 
-    // Based on https://github.com/d4mation/botw-unexplored-viewer/blob/master/assets/js/zelda-botw.js
+    // Based on https://github.com/d4mation/totk-unexplored-viewer/blob/master/assets/js/zelda-totk.js
 
     // Iterate through the entire savefile to find the korok seed and location hashes
-    for (unsigned int offset = 0x0c; offset < fileSize - 4; offset += 8)
+    for (unsigned int offset = 0x28; offset < fileSize - 4; offset += 8)
     {
         // Read the korok or location hash ('id')
         uint32_t hashValue = ReadU32(buffer, offset);

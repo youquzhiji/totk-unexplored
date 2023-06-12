@@ -9,11 +9,11 @@
 void LogInit()
 {
     // Create main dir
-    if (!SavefileIO::DirectoryExists("sdmc:/switch/botw-unexplored"))
-        mkdir("sdmc:/switch/botw-unexplored", 0777);
+    if (!SavefileIO::DirectoryExists("sdmc:/switch/totk-unexplored"))
+        mkdir("sdmc:/switch/totk-unexplored", 0777);
         
     // Clear the log
-    std::ofstream file("sdmc:/switch/botw-unexplored/log.txt", std::ofstream::out | std::ofstream::trunc);
+    std::ofstream file("sdmc:/switch/totk-unexplored/log.txt", std::ofstream::out | std::ofstream::trunc);
     file.close();
 }
 
@@ -55,7 +55,7 @@ void LogSave(std::string thing)
     // Print to nxlink console
     std::cout << thing << "\n";
 
-    std::ofstream file("sdmc:/switch/botw-unexplored/log.txt", std::ios::app); // Open file at end
+    std::ofstream file("sdmc:/switch/totk-unexplored/log.txt", std::ios::app); // Open file at end
     if (file.is_open())
         file << thing << "\n";
 

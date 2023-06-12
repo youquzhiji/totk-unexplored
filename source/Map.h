@@ -25,7 +25,7 @@ namespace Map
 {
     void Init();
 
-    void UpdateMapObjects();
+    void UpdateMapObjects(int layer);
 
     void Update();
     void Render();

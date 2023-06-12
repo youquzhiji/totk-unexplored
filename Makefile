@@ -38,9 +38,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 
-APP_TITLE	:=	BotW Unexplored
-APP_AUTHOR	:=	BigBear
-APP_VERSION :=  2.0.0
+APP_TITLE	:=	TotK Unexplored
+APP_AUTHOR	:=	youquzhiji
+APP_VERSION :=  1.0.0
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
