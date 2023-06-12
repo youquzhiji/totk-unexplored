@@ -25,7 +25,7 @@ public:
 
     glm::vec2 m_Position = glm::vec2(0.0f, 0.0f);
     bool m_Found = false;
-    
+    bool m_FocusedLayer =false;
     static bool m_ShowAnyway;
 
     static float m_Scale;
@@ -140,7 +140,9 @@ void MapObject<T>::Update(bool clear)
 
     if (m_Found && !Map::m_Legend->m_Show[IconButton::ShowCompleted]) 
         return;
-    
+    if (!m_FocusedLayer){
+        return;
+    }
     // Culling 
     float margin = m_Texture->m_Width + 10.0f;
     if (!Map::IsInView(m_Position, margin)) 
@@ -153,6 +155,7 @@ void MapObject<T>::Update(bool clear)
 template <typename T>
 void MapObject<T>::Render()
 {
+
     if (m_Mesh.GetVertices().empty())
         return;
 

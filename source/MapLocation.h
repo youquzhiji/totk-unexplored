@@ -24,8 +24,8 @@ public:
     glm::vec3 m_Color = glm::vec3(1.0f, 1.0f, 1.0f);
 
     bool m_Found = false;
+    bool m_FocusedLayer = false;
     static bool m_ShowAnyway;
-
     float m_Scale = 1.0f;
 
 public:

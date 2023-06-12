@@ -41,7 +41,7 @@ namespace Map
     const float m_ScreenRight = m_CameraWidth / 2.0f;
     const float m_ScreenTop = m_CameraHeight / 2.0f;
     const float m_ScreenBottom = -m_CameraHeight / 2.0f;
-
+    extern int m_layer;
     extern TexturedQuad m_MapBackground;
 
     extern Font m_Font;

@@ -36,7 +36,7 @@ void MapLocation::Update()
 void MapLocation::Render()
 {
     if (m_Found && !m_ShowAnyway) return;
-
+    if(!m_FocusedLayer) return;
     // Text culling
 
     // Because the text width is unknow before rendering, some margin is used to guess the width of the text

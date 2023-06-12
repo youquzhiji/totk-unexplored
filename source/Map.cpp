@@ -20,7 +20,6 @@ constexpr float MapScale = 0.25f;
 void Map::Init()
 {
     Data::LoadPaths();
-
     m_ProjectionMatrix = glm::ortho(-m_CameraWidth / 2, m_CameraWidth / 2, -m_CameraHeight / 2, m_CameraHeight / 2,
                                     -1.0f, 1.0f);
 
@@ -74,20 +73,26 @@ void Map::Init()
 
     // Create locations
     m_Locations = new MapLocation[Data::LocationsCount];
-
     UpdateMapObjects(0);
 }
 
-void Map::UpdateMapObjects(int layer)
+void Map::UpdateMapObjects(int focused_layer)
 {
     if (!SavefileIO::LoadedSavefile)
         return;
 
     for (int i = 0; i < Data::KoroksCount; i++) // Korok
     {
-        if (Data::Koroks[i].layer != layer){
-        continue;
+        //check if the korok is on the current layer
+        if (Data::Koroks[i].layer != focused_layer)
+        {
+            m_Koroks[i].m_FocusedLayer = false;
+
+            continue;
+
         }
+        m_Koroks[i].m_FocusedLayer = true;
+
         m_Koroks[i].m_Position = glm::vec2(Data::Koroks[i].x, -Data::Koroks[i].y) * MapScale;
 
         m_Koroks[i].m_ObjectData = &Data::Koroks[i];
@@ -101,8 +106,12 @@ void Map::UpdateMapObjects(int layer)
 
     for (int i = 0; i < Data::ShrineCount; i++) // Shrine
     {
-        if(Data::Shrines[i].layer != layer){
-        continue;}
+        if (Data::Shrines[i].layer != focused_layer)
+        {
+            m_Shrines[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Shrines[i].m_FocusedLayer = true;
         m_Shrines[i].m_Position = glm::vec2(Data::Shrines[i].x, -Data::Shrines[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
@@ -114,9 +123,12 @@ void Map::UpdateMapObjects(int layer)
 
     for (int i = 0; i < Data::DLCShrineCount; i++) // DLC Shrine
     {
-        if (Data::DLCShrines[i].layer != layer){
-        continue;
+        if (Data::DLCShrines[i].layer != focused_layer)
+        {
+            m_DLCShrines[i].m_FocusedLayer = false;
+            continue;
         }
+        m_DLCShrines[i].m_FocusedLayer = true;
         m_DLCShrines[i].m_Position = glm::vec2(Data::DLCShrines[i].x, -Data::DLCShrines[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
@@ -128,10 +140,12 @@ void Map::UpdateMapObjects(int layer)
 
     for (int i = 0; i < Data::HinoxesCount; i++) // Hinox
     {
-        if(Data::Hinoxes[i].layer != layer){
-        continue;
+        if (Data::Hinoxes[i].layer != focused_layer)
+        {
+            m_Hinoxes[i].m_FocusedLayer = false;
+            continue;
         }
-
+        m_Hinoxes[i].m_FocusedLayer = true;
         m_Hinoxes[i].m_Position = glm::vec2(Data::Hinoxes[i].x, -Data::Hinoxes[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
@@ -143,10 +157,12 @@ void Map::UpdateMapObjects(int layer)
 
     for (int i = 0; i < Data::TalusesCount; i++) // Talus
     {
-        if(Data::Taluses[i].layer != layer){
-        continue;
+        if (Data::Taluses[i].layer != focused_layer)
+        {
+            m_Taluses[i].m_FocusedLayer = false;
+            continue;
         }
-
+        m_Taluses[i].m_FocusedLayer = true;
         m_Taluses[i].m_Position = glm::vec2(Data::Taluses[i].x, -Data::Taluses[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
@@ -158,10 +174,12 @@ void Map::UpdateMapObjects(int layer)
 
     for (int i = 0; i < Data::MoldugasCount; i++) // Molduga
     {
-        if(Data::Moldugas[i].layer != layer){
-        continue;
+        if (Data::Moldugas[i].layer != focused_layer)
+        {
+            m_Moldugas[i].m_FocusedLayer = false;
+            continue;
         }
-
+        m_Moldugas[i].m_FocusedLayer = true;
         m_Moldugas[i].m_Position = glm::vec2(Data::Moldugas[i].x, -Data::Moldugas[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
@@ -173,10 +191,12 @@ void Map::UpdateMapObjects(int layer)
 
     for (int i = 0; i < Data::LocationsCount; i++) // Locations
     {
-        if(Data::Locations[i].layer != layer){
-        continue;
+        if (Data::Locations[i].layer != focused_layer)
+        {
+            m_Locations[i].m_FocusedLayer = false;
+            continue;
         }
-
+        m_Locations[i].m_FocusedLayer = true;
         m_Locations[i].m_Position = glm::vec2(Data::Locations[i].x, -Data::Locations[i].y) * MapScale;
         m_Locations[i].m_LocationData = &Data::Locations[i];
 
@@ -196,7 +216,7 @@ void Map::Update()
 
     u64 buttonsPressed = padGetButtonsDown(m_Pad);
     u64 buttonsDown = padGetButtons(m_Pad);
-    int layer = 0;
+
     float zoomAmount = 0.015f;
     float dragAmont = 0.85f;
     float analogStickMovementSpeed = 10.0f;
@@ -237,7 +257,7 @@ void Map::Update()
             m_LoadMasterMode = false;
 
             SavefileIO::LoadGamesave(false, true);
-            UpdateMapObjects(layer);
+            UpdateMapObjects(0);
         }
     }
 
@@ -265,7 +285,7 @@ void Map::Update()
             m_LoadMasterMode = !m_LoadMasterMode;
 
             SavefileIO::LoadGamesave(m_LoadMasterMode);
-            UpdateMapObjects(layer);
+            UpdateMapObjects(m_layer);
         }
     }
     //wip
@@ -275,13 +295,14 @@ void Map::Update()
     {
         if (m_KorokDialog->m_IsOpen)
         {
-            m_Koroks[m_KorokDialog->m_KorokIndex].m_Found = true;
+
             m_KorokDialog->SetOpen(false);
         }
-        if (layer <= 1)
+        if (m_layer < 1)
         {
-            layer = layer + 1;
-            UpdateMapObjects(layer);
+            m_layer = m_layer + 1;
+            UpdateMapObjects(m_layer);
+            Log("Layer: %d", m_layer);
             //TODO: add a way to toggle layers of map using update map objects taking the layer variable
         }
     }
@@ -289,13 +310,14 @@ void Map::Update()
     {
         if (m_KorokDialog->m_IsOpen)
         {
-            m_Koroks[m_KorokDialog->m_KorokIndex].m_Found = true;
+
             m_KorokDialog->SetOpen(false);
         }
-        if (layer >= 0)
+        if (m_layer > -1)
         {
-            layer = layer - 1;
-            UpdateMapObjects(layer);
+            m_layer = m_layer - 1;
+            UpdateMapObjects(m_layer);
+            Log("Layer: %d", m_layer);
             //TODO: add a way to toggle layers of map using update map objects taking the layer variable
         }
     }
@@ -444,58 +466,58 @@ void Map::Render()
     {
         if (m_Legend->m_Show[IconButton::ButtonTypes::Koroks])
         {
-            Log("Rendering korok paths");
+
             // Render korok paths
-            for (int k = 0; k < Data::KoroksCount; k++)
-            {
-                // This korok has no paths
-                if (m_Koroks[k].m_ObjectData->path == nullptr)
-                    continue;
+//            for (int k = 0; k < Data::KoroksCount; k++)
+//            {
+//                // This korok has no paths
+//                if (m_Koroks[k].m_ObjectData->path == nullptr)
+//                    continue;
+//
+//                // Don't render if found
+//                if (m_Koroks[k].m_Found && !m_Legend->m_Show[IconButton::ShowCompleted])
+//                    continue;
+//
+//                Data::KorokPath *path = m_Koroks[k].m_ObjectData->path;
+//
+//                // 0 -> 1
+//                // 1 -> 2
+//                // 2 -> 3
+//                for (unsigned int p = 1; p < path->points.size(); p++)
+//                {
+//                    glm::vec2 start = path->points[p - 1] * MapScale;
+//                    start.y *= -1; // Flip the y coord
+//                    glm::vec2 end = path->points[p] * MapScale;
+//                    end.y *= -1;
+//
+//                    float width = (1.0f / m_Zoom) * 2.0f;
+//                    if (m_Zoom >= 3.0f)
+//                        width = 0.75f;
+//
+//                    m_LineRenderer->AddLine(start, end, width);
+//                }
+//            }
 
-                // Don't render if found
-                if (m_Koroks[k].m_Found && !m_Legend->m_Show[IconButton::ShowCompleted])
-                    continue;
+//            m_LineRenderer->RenderLines(m_ProjectionMatrix, m_ViewMatrix);
 
-                Data::KorokPath *path = m_Koroks[k].m_ObjectData->path;
-
-                // 0 -> 1
-                // 1 -> 2
-                // 2 -> 3
-                for (unsigned int p = 1; p < path->points.size(); p++)
-                {
-                    glm::vec2 start = path->points[p - 1] * MapScale;
-                    start.y *= -1; // Flip the y coord
-                    glm::vec2 end = path->points[p] * MapScale;
-                    end.y *= -1;
-
-                    float width = (1.0f / m_Zoom) * 2.0f;
-                    if (m_Zoom >= 3.0f)
-                        width = 0.75f;
-
-                    m_LineRenderer->AddLine(start, end, width);
-                }
-            }
-
-            m_LineRenderer->RenderLines(m_ProjectionMatrix, m_ViewMatrix);
-            Log("Rendering korok paths");
             MapObject<Data::Korok>::Render();
         }
-        Log("Rendering shrines");
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Shrines])
             MapObject<Data::Shrine>::Render();
-        Log("Rendering dlc shrines");
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Shrines] && SavefileIO::HasDLC)
             MapObject<Data::DLCShrine>::Render();
-        Log("Rendering hinoxes");
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Hinoxes])
             MapObject<Data::Hinox>::Render();
-        Log("Rendering taluses");
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Taluses])
             MapObject<Data::Talus>::Render();
-        Log("Rendering moldugas");
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Moldugas])
             MapObject<Data::Molduga>::Render();
-        Log("Rendering locations");
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Locations])
         {
             for (int i = 0; i < Data::LocationsCount; i++)
@@ -603,7 +625,7 @@ glm::mat4 Map::m_ViewMatrix = glm::mat4(1.0f);
 
 glm::vec2 Map::m_CameraPosition = glm::vec2(0.0f, 0.0f);
 glm::vec2 Map::m_PrevCameraPosition;
-
+int Map::m_layer = 0;
 int Map::m_PrevTouchCount = 0;
 glm::vec2 Map::m_PrevTouchPosition;
 glm::vec2 Map::m_StartDragPos;
