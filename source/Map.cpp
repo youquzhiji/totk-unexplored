@@ -1,5 +1,5 @@
 #include "Map.h"
-
+#include <string>
 #include <algorithm>
 #include <switch.h>
 
@@ -17,6 +17,16 @@
 
 constexpr float MapScale = 0.25f;
 
+void Map::SwitchLayer(int layer)
+{
+    std::string texturePath= "romfs:/"+std::to_string(layer)+"-min.png";
+    m_MapBackground.Create(texturePath);
+    m_MapBackground.m_ProjectionMatrix = &m_ProjectionMatrix;
+    m_MapBackground.m_ViewMatrix = &m_ViewMatrix;
+    m_MapBackground.Render();
+
+}
+
 void Map::Init()
 {
     Data::LoadPaths();
@@ -24,7 +34,7 @@ void Map::Init()
                                     -1.0f, 1.0f);
 
     // Map image
-    m_MapBackground.Create("romfs:/map-lowres.png");
+    m_MapBackground.Create("romfs:/0-min.png");
     m_MapBackground.m_ProjectionMatrix = &m_ProjectionMatrix;
     m_MapBackground.m_ViewMatrix = &m_ViewMatrix;
 
@@ -71,6 +81,15 @@ void Map::Init()
     m_Moldugas = new MapObject<Data::Molduga>[Data::MoldugasCount];
     MapObject<Data::Molduga>::Init("romfs:/molduga.png", Data::MoldugasCount);
 
+    m_Gleeoks = new MapObject<Data::Gleeok>[Data::GleeoksCount];
+    MapObject<Data::Gleeok>::Init("romfs:/gleeok.png", Data::GleeoksCount);
+
+    m_Froxes = new MapObject<Data::Frox>[Data::FroxesCount];
+    MapObject<Data::Frox>::Init("romfs:/frox.png", Data::FroxesCount);
+
+    m_FluxConstructs = new MapObject<Data::FluxConstruct>[Data::FluxConstructsCount];
+    MapObject<Data::FluxConstruct>::Init("romfs:/flux.png", Data::FluxConstructsCount);
+
     // Create locations
     m_Locations = new MapLocation[Data::LocationsCount];
     UpdateMapObjects(0);
@@ -93,7 +112,7 @@ void Map::UpdateMapObjects(int focused_layer)
         }
         m_Koroks[i].m_FocusedLayer = true;
 
-        m_Koroks[i].m_Position = glm::vec2(Data::Koroks[i].x, -Data::Koroks[i].y) * MapScale;
+        m_Koroks[i].m_Position = glm::vec2(Data::Koroks[i].x, Data::Koroks[i].y) * MapScale;
 
         m_Koroks[i].m_ObjectData = &Data::Koroks[i];
 
@@ -112,7 +131,7 @@ void Map::UpdateMapObjects(int focused_layer)
             continue;
         }
         m_Shrines[i].m_FocusedLayer = true;
-        m_Shrines[i].m_Position = glm::vec2(Data::Shrines[i].x, -Data::Shrines[i].y) * MapScale;
+        m_Shrines[i].m_Position = glm::vec2(Data::Shrines[i].x, Data::Shrines[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
         m_Shrines[i].m_Found = std::find(
@@ -129,7 +148,7 @@ void Map::UpdateMapObjects(int focused_layer)
             continue;
         }
         m_DLCShrines[i].m_FocusedLayer = true;
-        m_DLCShrines[i].m_Position = glm::vec2(Data::DLCShrines[i].x, -Data::DLCShrines[i].y) * MapScale;
+        m_DLCShrines[i].m_Position = glm::vec2(Data::DLCShrines[i].x, Data::DLCShrines[i].y) * MapScale;
 
         // Check if the korok has been found (if the found vector contains it)
         m_DLCShrines[i].m_Found = std::find(
@@ -146,9 +165,9 @@ void Map::UpdateMapObjects(int focused_layer)
             continue;
         }
         m_Hinoxes[i].m_FocusedLayer = true;
-        m_Hinoxes[i].m_Position = glm::vec2(Data::Hinoxes[i].x, -Data::Hinoxes[i].y) * MapScale;
+        m_Hinoxes[i].m_Position = glm::vec2(Data::Hinoxes[i].x, Data::Hinoxes[i].y) * MapScale;
 
-        // Check if the korok has been found (if the found vector contains it)
+        // Check if the hinox has been found (if the found vector contains it)
         m_Hinoxes[i].m_Found = std::find(
                 SavefileIO::defeatedHinoxes.begin(),
                 SavefileIO::defeatedHinoxes.end(),
@@ -163,9 +182,9 @@ void Map::UpdateMapObjects(int focused_layer)
             continue;
         }
         m_Taluses[i].m_FocusedLayer = true;
-        m_Taluses[i].m_Position = glm::vec2(Data::Taluses[i].x, -Data::Taluses[i].y) * MapScale;
+        m_Taluses[i].m_Position = glm::vec2(Data::Taluses[i].x, Data::Taluses[i].y) * MapScale;
 
-        // Check if the korok has been found (if the found vector contains it)
+        // Check if the talus has been found (if the found vector contains it)
         m_Taluses[i].m_Found = std::find(
                 SavefileIO::defeatedTaluses.begin(),
                 SavefileIO::defeatedTaluses.end(),
@@ -180,13 +199,61 @@ void Map::UpdateMapObjects(int focused_layer)
             continue;
         }
         m_Moldugas[i].m_FocusedLayer = true;
-        m_Moldugas[i].m_Position = glm::vec2(Data::Moldugas[i].x, -Data::Moldugas[i].y) * MapScale;
+        m_Moldugas[i].m_Position = glm::vec2(Data::Moldugas[i].x, Data::Moldugas[i].y) * MapScale;
 
-        // Check if the korok has been found (if the found vector contains it)
+        // Check if the molduga has been found (if the found vector contains it)
         m_Moldugas[i].m_Found = std::find(
                 SavefileIO::defeatedMoldugas.begin(),
                 SavefileIO::defeatedMoldugas.end(),
                 &Data::Moldugas[i]) != SavefileIO::defeatedMoldugas.end();
+    }
+    for (int i=0; i<Data::FroxesCount;i++){
+        if (Data::Froxes[i].layer != focused_layer)
+        {
+            m_Froxes[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Froxes[i].m_FocusedLayer = true;
+        m_Froxes[i].m_Position = glm::vec2(Data::Froxes[i].x, Data::Froxes[i].y) * MapScale;
+
+        // Check if the frox has been found (if the found vector contains it)
+        m_Froxes[i].m_Found = std::find(
+                SavefileIO::defeatedFroxes.begin(),
+                SavefileIO::defeatedFroxes.end(),
+                &Data::Froxes[i]) != SavefileIO::defeatedFroxes.end();
+    }
+    for (int i=0;i< Data::GleeoksCount;i++)
+    {
+        if (Data::Gleeoks[i].layer != focused_layer)
+        {
+            m_Gleeoks[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Gleeoks[i].m_FocusedLayer = true;
+        m_Gleeoks[i].m_Position = glm::vec2(Data::Gleeoks[i].x, Data::Gleeoks[i].y) * MapScale;
+
+        // Check if the gleeok has been found (if the found vector contains it)
+        m_Gleeoks[i].m_Found = std::find(
+                SavefileIO::defeatedGleeoks.begin(),
+                SavefileIO::defeatedGleeoks.end(),
+                &Data::Gleeoks[i]) != SavefileIO::defeatedGleeoks.end();
+    }
+
+    for(int i=0;i<Data::FluxConstructsCount; i++)
+    {
+        if (Data::FluxConstructs[i].layer != focused_layer)
+        {
+            m_FluxConstructs[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_FluxConstructs[i].m_FocusedLayer = true;
+        m_FluxConstructs[i].m_Position = glm::vec2(Data::FluxConstructs[i].x, Data::FluxConstructs[i].y) * MapScale;
+
+        // Check if the flux construct has been found (if the found vector contains it)
+        m_FluxConstructs[i].m_Found = std::find(
+                SavefileIO::defeatedFluxConstructs.begin(),
+                SavefileIO::defeatedFluxConstructs.end(),
+                &Data::FluxConstructs[i]) != SavefileIO::defeatedFluxConstructs.end();
     }
 
     for (int i = 0; i < Data::LocationsCount; i++) // Locations
@@ -197,10 +264,10 @@ void Map::UpdateMapObjects(int focused_layer)
             continue;
         }
         m_Locations[i].m_FocusedLayer = true;
-        m_Locations[i].m_Position = glm::vec2(Data::Locations[i].x, -Data::Locations[i].y) * MapScale;
+        m_Locations[i].m_Position = glm::vec2(Data::Locations[i].x, Data::Locations[i].y) * MapScale;
         m_Locations[i].m_LocationData = &Data::Locations[i];
 
-        // Check if the korok has been found (if the found vector contains it)
+        // Check if the location has been found (if the found vector contains it)
         m_Locations[i].m_Found = std::find(
                 SavefileIO::visitedLocations.begin(),
                 SavefileIO::visitedLocations.end(),
@@ -288,37 +355,41 @@ void Map::Update()
             UpdateMapObjects(m_layer);
         }
     }
-    //wip
-    //TODO: add a way to toggle layers of map using update map objects
+
     //toggle layers of map
     if (buttonsPressed & HidNpadButton_Up)
     {
-        if (m_KorokDialog->m_IsOpen)
+        if (!m_Legend->m_IsOpen)
         {
-
-            m_KorokDialog->SetOpen(false);
-        }
-        if (m_layer < 1)
-        {
-            m_layer = m_layer + 1;
-            UpdateMapObjects(m_layer);
-            Log("Layer: %d", m_layer);
-            //TODO: add a way to toggle layers of map using update map objects taking the layer variable
+            if (m_KorokDialog->m_IsOpen)
+            {
+                m_KorokDialog->SetOpen(false);
+            }
+            if (m_layer < 1)
+            {
+                m_layer = m_layer + 1;
+                SwitchLayer(m_layer);
+                UpdateMapObjects(m_layer);
+                Log("Layer: %d", m_layer);
+            }
         }
     }
     if (buttonsPressed & HidNpadButton_Down)
     {
-        if (m_KorokDialog->m_IsOpen)
+        if (!m_Legend->m_IsOpen)
         {
+            if (m_KorokDialog->m_IsOpen)
+            {
 
-            m_KorokDialog->SetOpen(false);
-        }
-        if (m_layer > -1)
-        {
-            m_layer = m_layer - 1;
-            UpdateMapObjects(m_layer);
-            Log("Layer: %d", m_layer);
-            //TODO: add a way to toggle layers of map using update map objects taking the layer variable
+                m_KorokDialog->SetOpen(false);
+            }
+            if (m_layer > -1)
+            {
+                m_layer = m_layer - 1;
+                SwitchLayer(m_layer);
+                UpdateMapObjects(m_layer);
+                Log("Layer: %d", m_layer);
+            }
         }
     }
     if (buttonsPressed & HidNpadButton_B)
@@ -447,6 +518,12 @@ void Map::Update()
             m_Taluses[i].Update(i == 0);
         for (int i = 0; i < Data::MoldugasCount; i++)
             m_Moldugas[i].Update(i == 0);
+        for (int i= 0; i < Data::FroxesCount; i++)
+            m_Froxes[i].Update(i == 0);
+        for (int i = 0; i < Data::GleeoksCount; i++)
+            m_Gleeoks[i].Update(i == 0);
+        for (int i = 0; i < Data::FluxConstructsCount; i++)
+            m_FluxConstructs[i].Update(i == 0);
         for (int i = 0; i < Data::LocationsCount; i++)
             m_Locations[i].Update();
 
@@ -517,6 +594,13 @@ void Map::Render()
 
         if (m_Legend->m_Show[IconButton::ButtonTypes::Moldugas])
             MapObject<Data::Molduga>::Render();
+
+        if (m_Legend->m_Show[IconButton::ButtonTypes::Froxes])
+            MapObject<Data::Frox>::Render();
+        if(m_Legend->m_Show[IconButton::ButtonTypes::Gleeoks])
+            MapObject<Data::Gleeok>::Render();
+        if(m_Legend->m_Show[IconButton::ButtonTypes::FluxConstructs])
+            MapObject<Data::FluxConstruct>::Render();
 
         if (m_Legend->m_Show[IconButton::ButtonTypes::Locations])
         {
@@ -640,6 +724,9 @@ MapObject<Data::DLCShrine> *Map::m_DLCShrines;
 MapObject<Data::Hinox> *Map::m_Hinoxes;
 MapObject<Data::Talus> *Map::m_Taluses;
 MapObject<Data::Molduga> *Map::m_Moldugas;
+MapObject<Data::FluxConstruct> *Map::m_FluxConstructs;
+MapObject<Data::Frox> *Map::m_Froxes;
+MapObject<Data::Gleeok> *Map::m_Gleeoks;
 MapLocation *Map::m_Locations;
 
 Legend *Map::m_Legend;

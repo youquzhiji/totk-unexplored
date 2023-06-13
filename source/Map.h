@@ -33,7 +33,7 @@ namespace Map
     bool IsInView(glm::vec2 position, float margin);
 
     void Destory();
-
+    void SwitchLayer(int layer);
     const float m_DefaultZoom = 0.125f * 2;
     const float m_CameraWidth = 1280.0f;
     const float m_CameraHeight = 720.0f;
@@ -72,7 +72,9 @@ namespace Map
     extern MapObject<Data::Hinox>* m_Hinoxes;
     extern MapObject<Data::Talus>* m_Taluses;
     extern MapObject<Data::Molduga>* m_Moldugas;
-
+    extern MapObject<Data::Gleeok>* m_Gleeoks;
+    extern MapObject<Data::Frox>* m_Froxes;
+    extern MapObject<Data::FluxConstruct>* m_FluxConstructs;
     extern MapLocation* m_Locations;
 
     extern Legend* m_Legend;

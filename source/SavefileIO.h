@@ -23,6 +23,12 @@ namespace SavefileIO
     extern std::vector<Data::Talus*> undefeatedTaluses;
     extern std::vector<Data::Molduga*> defeatedMoldugas;
     extern std::vector<Data::Molduga*> undefeatedMoldugas;
+    extern std::vector<Data::Gleeok*> defeatedGleeoks;
+    extern std::vector<Data::Gleeok*> undefeatedGleeoks;
+    extern std::vector<Data::Frox*> defeatedFroxes;
+    extern std::vector<Data::Frox*> undefeatedFroxes;
+    extern std::vector<Data::FluxConstruct*> defeatedFluxConstructs;
+    extern std::vector<Data::FluxConstruct*> undefeatedFluxConstructs;
 
     bool LoadGamesave(bool loadMasterMode = false, bool chooseProfile = false);
 

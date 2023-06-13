@@ -14,8 +14,13 @@ public:
         Taluses = 3,
         Moldugas = 4,
         Locations = 5,
-        ShowCompleted = 6,
-        Count = 7
+        Froxes = 6,
+        Gleeoks = 7,
+        FluxConstructs = 8,
+        Caves = 9,
+        Wells = 10,
+        ShowCompleted = 11,
+        Count = 12
     };
 
 public:
@@ -71,7 +76,7 @@ public:
 
     std::vector<IconButton*> m_Buttons;
 
-    float m_Width = 350.0f;
+    float m_Width = 1050.0f;
 
     int m_PrevTouchCount = 0;
 

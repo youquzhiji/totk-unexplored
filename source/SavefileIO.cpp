@@ -537,6 +537,12 @@ bool SavefileIO::ParseFile(const char *filepath)
     undefeatedTaluses.clear();
     defeatedMoldugas.clear();
     undefeatedMoldugas.clear();
+    defeatedGleeoks.clear();
+    undefeatedGleeoks.clear();
+    defeatedFroxes.clear();
+    undefeatedFroxes.clear();
+    defeatedFluxConstructs.clear();
+    undefeatedFluxConstructs.clear();
 
     if (!FileExists(filepath))
         return false;
@@ -634,6 +640,30 @@ bool SavefileIO::ParseFile(const char *filepath)
 
             defeated ? defeatedMoldugas.push_back(molduga) : undefeatedMoldugas.push_back(molduga);
         }
+        Data::Gleeok *gleeok = Data::GleeokExists(hashValue);
+        if (gleeok)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the molduga has been defeated.
+            bool defeated = ReadU32(buffer, offset + 4) != 0;
+
+            defeated ? defeatedGleeoks.push_back(gleeok) : undefeatedGleeoks.push_back(gleeok);
+        }
+        Data::Frox *frox = Data::FroxExists(hashValue);
+        if (frox)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the molduga has been defeated.
+            bool defeated = ReadU32(buffer, offset + 4) != 0;
+
+            defeated ? defeatedFroxes.push_back(frox) : undefeatedFroxes.push_back(frox);
+        }
+        Data::FluxConstruct *fluxConstruct = Data::FluxConstructExists(hashValue);
+        if (fluxConstruct)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the molduga has been defeated.
+            bool defeated = ReadU32(buffer, offset + 4) != 0;
+
+            defeated ? defeatedFluxConstructs.push_back(fluxConstruct) : undefeatedFluxConstructs.push_back(fluxConstruct);
+        }
 
         // Check if has the dlc
         uint32_t BalladOfHeroes_Ready = 1186840637; // Set to true if the DLC is owned
@@ -666,6 +696,12 @@ std::vector<Data::Talus *> SavefileIO::defeatedTaluses;
 std::vector<Data::Talus *> SavefileIO::undefeatedTaluses;
 std::vector<Data::Molduga *> SavefileIO::defeatedMoldugas;
 std::vector<Data::Molduga *> SavefileIO::undefeatedMoldugas;
+std::vector<Data::Gleeok *> SavefileIO::defeatedGleeoks;
+std::vector<Data::Gleeok *> SavefileIO::undefeatedGleeoks;
+std::vector<Data::Frox *> SavefileIO::defeatedFroxes;
+std::vector<Data::Frox *> SavefileIO::undefeatedFroxes;
+std::vector<Data::FluxConstruct *> SavefileIO::defeatedFluxConstructs;
+std::vector<Data::FluxConstruct *> SavefileIO::undefeatedFluxConstructs;
 
 u64 SavefileIO::AccountUid1;
 u64 SavefileIO::AccountUid2;

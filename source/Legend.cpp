@@ -29,12 +29,20 @@ Legend::Legend()
 
     float topOffset = 80.0f;
     float buttonHeight = 65.0f;
+    //the vertical capacity is 7
+    //therefore we will make a grid of 3X7 buttons
+    //the horizontal capacity is 3
+
     for (int i = 0; i < IconButton::ButtonTypes::Count; i++)
     {
-        float topY = top - (buttonHeight * i) - (topOffset + buttonVerticalPadding * i);
+        int column = i / 7;
+        int row = i % 7;
+        float topY = top - (buttonHeight * row) - (topOffset + buttonVerticalPadding * row);
 
-        float posLeft = left + buttonPadding;
-        float buttonWidth = m_Width - (buttonPadding * 2);
+
+        float buttonWidth = (m_Width-4*buttonPadding)/3;
+
+        float posLeft = left + buttonPadding+column*(buttonWidth+buttonPadding);
 
         IconButton* button = new IconButton((IconButton::ButtonTypes)i, glm::vec2(posLeft, topY), buttonWidth, buttonHeight, 1.25f * 0.5f);
         button->m_Button.m_Color = IconButton::DefaultColor;
@@ -114,6 +122,34 @@ void Legend::Update()
             UpdateSelectedButton();
         }
     }
+    if (buttonsPressed & HidNpadButton_Left)
+    {
+        if (m_HighlightedButton > 6)
+        {
+            m_HighlightedButton -= 7;
+
+
+        }
+        else
+        {
+            m_HighlightedButton = 0;
+        }
+        UpdateSelectedButton();
+    }
+    if (buttonsPressed & HidNpadButton_Right)
+    {
+        if (m_HighlightedButton < (int)m_Buttons.size() - 7)
+        {
+            m_HighlightedButton += 7;
+
+
+        } else {
+            m_HighlightedButton = m_Buttons.size() - 1;
+        }
+        UpdateSelectedButton();
+    }
+
+
     if (buttonsPressed & HidNpadButton_A)
     {
         // Bounds check
@@ -212,6 +248,21 @@ IconButton::IconButton(ButtonTypes type, glm::vec2 position, float width, float 
         iconPath = "romfs:/molduga.png";
 
         break;
+    case Gleeoks:
+        m_Text = "Gleeoks";
+        iconPath = "romfs:/gleeok.png";
+
+        break;
+    case Froxes:
+        m_Text = "Froxes";
+        iconPath = "romfs:/frox.png";
+
+        break;
+    case FluxConstructs:
+        m_Text = "Flux Constructs";
+        iconPath = "romfs:/flux.png";
+
+        break;
     case Locations:
         m_Text = "Locations";
         iconPath = "romfs:/village.png";
@@ -292,9 +343,19 @@ void IconButton::Render()
     case Moldugas:
         countString = std::to_string(SavefileIO::defeatedMoldugas.size()) + "/" + std::to_string(Data::MoldugasCount);
         break;
+    case Gleeoks:
+        countString = std::to_string(SavefileIO::defeatedGleeoks.size()) + "/" + std::to_string(Data::GleeoksCount);
+        break;
+    case Froxes:
+        countString = std::to_string(SavefileIO::defeatedFroxes.size()) + "/" + std::to_string(Data::FroxesCount);
+        break;
+    case FluxConstructs:
+        countString = std::to_string(SavefileIO::defeatedFluxConstructs.size()) + "/" + std::to_string(Data::FluxConstructsCount);
+        break;
     case Locations:
         countString = std::to_string(SavefileIO::visitedLocations.size()) + "/" + std::to_string(Data::LocationsCount);
         break;
+
 
     default:
         break;

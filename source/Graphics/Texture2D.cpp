@@ -48,6 +48,7 @@ void Texture2D::Load(const std::string& filepath)
 		    Log("Failed to load texture", filepath);
         else 
             Log("Failed to load texture (empty path)");
+        Log(stbi_failure_reason());
 	}
 
 	stbi_image_free(data);

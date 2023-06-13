@@ -75,8 +75,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Shrine(uint32_t hash, const std::string &displayName, float x, float y) :
-                hash(hash), x(x), y(y)
+        Shrine(uint32_t hash, const std::string &displayName, float x, float y,float z,int layer) :
+                hash(hash), x(x), y(y),z(z), layer(layer)
         {};
     };
 
@@ -90,8 +90,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Lightroot(uint32_t hash, const std::string &displayName, float x, float y) :
-                hash(hash), x(x), y(y)
+        Lightroot(uint32_t hash, const std::string &displayName, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y),z(z), layer(layer)
         {};
     };
     // From https://github.com/MrCheeze/botw-tools/blob/master/gamedata/s32_data_0.xml
@@ -119,6 +119,7 @@ namespace Data
 
         float x = 0;
         float y = 0;
+        float z = 0;
 
         Location(uint32_t hash, const std::string &displayName, float x, float y) :
                 hash(hash), displayName(displayName), x(x), y(y)
@@ -138,8 +139,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Caves(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Caves(uint32_t hash, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
@@ -153,8 +154,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Chasm(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Chasm(uint32_t hash, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
     // Hash and positions from https://github.com/marcrobledo/savegame-editors/blob/master/zelda-botw/zelda-botw.data.js  BOTW_DATA.COORDS[BOTW_Data.DEFEATED_TALUS[i]]
@@ -166,8 +167,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Hinox(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Hinox(uint32_t hash,std::string name, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
     struct Talus
@@ -178,8 +179,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Talus(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Talus(uint32_t hash,std::string name, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
@@ -193,8 +194,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Molduga(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Molduga(uint32_t hash,std::string name, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
@@ -206,8 +207,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Frox(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Frox(uint32_t hash,std::string name, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
@@ -219,8 +220,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        FluxConstruct(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        FluxConstruct(uint32_t hash,std::string name, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
@@ -232,8 +233,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Gleeok(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Gleeok(uint32_t hash, std::string name,float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
@@ -253,8 +254,8 @@ namespace Data
         float y = 0;
         float z = 0;
         int layer;
-        Armor(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        Armor(uint32_t hash, float x, float y, float z, int layer, std::string displayName) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
     struct HudsonSign
@@ -265,8 +266,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        HudsonSign(uint32_t hash, float x, float y) :
-                hash(hash), x(x), y(y)
+        HudsonSign(uint32_t hash, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y) , z(z), layer(layer)
         {};
     };
     // Create koroks
@@ -285,7 +286,7 @@ namespace Data
 
     // Create shrines
 
-    const int ShrineCount = 120;
+    const int ShrineCount = 152;
     extern Shrine Shrines[ShrineCount];
 
     Shrine *ShrineExists(uint32_t hash);
@@ -301,12 +302,27 @@ namespace Data
 
     Location *LocationExists(uint32_t hash);
 
-    const int HinoxesCount = 40;
+    const int FluxConstructsCount = 35;
+    extern FluxConstruct FluxConstructs[FluxConstructsCount];
+
+    FluxConstruct *FluxConstructExists(uint32_t hash);
+
+    const int FroxesCount = 40;
+    extern Frox Froxes[FroxesCount];
+
+    Frox *FroxExists(uint32_t hash);
+
+    const int GleeoksCount = 14;
+    extern Gleeok Gleeoks[GleeoksCount];
+
+    Gleeok *GleeokExists(uint32_t hash);
+
+    const int HinoxesCount = 69;
     extern Hinox Hinoxes[HinoxesCount];
 
     Hinox *HinoxExists(uint32_t hash);
 
-    const int TalusesCount = 40;
+    const int TalusesCount = 87;
     extern Talus Taluses[TalusesCount];
 
     Talus *TalusExists(uint32_t hash);
