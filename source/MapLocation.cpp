@@ -3,6 +3,7 @@
 #include <switch.h>
 
 #include "Map.h"
+#include "Legend.h"
 #include "Graphics/BasicVertices.h"
 #include "SavefileIO.h"
 
@@ -31,6 +32,7 @@ void MapLocation::Update()
     float minScale = 0.25f;
     if (m_Scale < minScale)
         m_Scale = minScale;
+
 }
 
 void MapLocation::Render()

@@ -10,17 +10,19 @@ public:
     enum ButtonTypes {
         Koroks = 0,
         Shrines = 1,
-        Hinoxes = 2,
-        Taluses = 3,
-        Moldugas = 4,
-        Locations = 5,
+        Lightroots=2,
+        Hinoxes = 3,
+        Taluses = 4,
+        Moldugas = 5,
+
         Froxes = 6,
         Gleeoks = 7,
         FluxConstructs = 8,
+        Locations = 11,
         Caves = 9,
         Wells = 10,
-        ShowCompleted = 11,
-        Count = 12
+        ShowCompleted = 12,
+        Count=13,
     };
 
 public:

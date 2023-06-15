@@ -90,6 +90,15 @@ void Map::Init()
     m_FluxConstructs = new MapObject<Data::FluxConstruct>[Data::FluxConstructsCount];
     MapObject<Data::FluxConstruct>::Init("romfs:/flux.png", Data::FluxConstructsCount);
 
+    m_Wells = new MapObject<Data::Well>[Data::WellsCount];
+    MapObject<Data::Well>::Init("romfs:/well.png", Data::WellsCount);
+
+    m_Caves = new MapObject<Data::Cave>[Data::CavesCount];
+    MapObject<Data::Cave>::Init("romfs:/cave.png", Data::CavesCount);
+
+    m_Lightroots = new MapObject<Data::Lightroot>[Data::LightrootsCount];
+    MapObject<Data::Lightroot>::Init("romfs:/lightroot.png", Data::LightrootsCount);
+
     // Create locations
     m_Locations = new MapLocation[Data::LocationsCount];
     UpdateMapObjects(0);
@@ -138,6 +147,22 @@ void Map::UpdateMapObjects(int focused_layer)
                 SavefileIO::foundShrines.begin(),
                 SavefileIO::foundShrines.end(),
                 &Data::Shrines[i]) != SavefileIO::foundShrines.end();
+    }
+
+    for (int i=0; i< Data::LightrootsCount; i++){
+        if (Data::Lightroots[i].layer != focused_layer)
+        {
+            m_Lightroots[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Lightroots[i].m_FocusedLayer = true;
+        m_Lightroots[i].m_Position = glm::vec2(Data::Lightroots[i].x, Data::Lightroots[i].y) * MapScale;
+
+        // Check if the korok has been found (if the found vector contains it)
+        m_Lightroots[i].m_Found = std::find(
+                SavefileIO::foundLightroots.begin(),
+                SavefileIO::foundLightroots.end(),
+                &Data::Lightroots[i]) != SavefileIO::foundLightroots.end();
     }
 
     for (int i = 0; i < Data::DLCShrineCount; i++) // DLC Shrine
@@ -254,6 +279,38 @@ void Map::UpdateMapObjects(int focused_layer)
                 SavefileIO::defeatedFluxConstructs.begin(),
                 SavefileIO::defeatedFluxConstructs.end(),
                 &Data::FluxConstructs[i]) != SavefileIO::defeatedFluxConstructs.end();
+    }
+
+    for (int i=0; i<Data::WellsCount;i++){
+        if (Data::Wells[i].layer != focused_layer)
+        {
+            m_Wells[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Wells[i].m_FocusedLayer = true;
+        m_Wells[i].m_Position = glm::vec2(Data::Wells[i].x, Data::Wells[i].y) * MapScale;
+
+        // Check if the well has been found (if the found vector contains it)
+        m_Wells[i].m_Found = std::find(
+                SavefileIO::visitedWells.begin(),
+                SavefileIO::visitedWells.end(),
+                &Data::Wells[i]) != SavefileIO::visitedWells.end();
+    }
+
+    for(int i =0;i<Data::CavesCount;i++){
+        if (Data::Caves[i].layer != focused_layer)
+        {
+            m_Caves[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Caves[i].m_FocusedLayer = true;
+        m_Caves[i].m_Position = glm::vec2(Data::Caves[i].x, Data::Caves[i].y) * MapScale;
+
+        // Check if the cave has been found (if the found vector contains it)
+        m_Caves[i].m_Found = std::find(
+                SavefileIO::visitedCaves.begin(),
+                SavefileIO::visitedCaves.end(),
+                &Data::Caves[i]) != SavefileIO::visitedCaves.end();
     }
 
     for (int i = 0; i < Data::LocationsCount; i++) // Locations
@@ -510,6 +567,8 @@ void Map::Update()
             m_Koroks[i].Update(i == 0);
         for (int i = 0; i < Data::ShrineCount; i++)
             m_Shrines[i].Update(i == 0);
+        for (int i = 0; i < Data::LightrootsCount; i++)
+            m_Lightroots[i].Update(i == 0);
         for (int i = 0; i < Data::DLCShrineCount; i++)
             m_DLCShrines[i].Update(i == 0);
         for (int i = 0; i < Data::HinoxesCount; i++)
@@ -524,6 +583,10 @@ void Map::Update()
             m_Gleeoks[i].Update(i == 0);
         for (int i = 0; i < Data::FluxConstructsCount; i++)
             m_FluxConstructs[i].Update(i == 0);
+        for (int i=0; i<Data::WellsCount; i++)
+            m_Wells[i].Update(i == 0);
+        for(int i=0; i<Data::CavesCount; i++)
+            m_Caves[i].Update(i == 0);
         for (int i = 0; i < Data::LocationsCount; i++)
             m_Locations[i].Update();
 
@@ -586,6 +649,9 @@ void Map::Render()
         if (m_Legend->m_Show[IconButton::ButtonTypes::Shrines] && SavefileIO::HasDLC)
             MapObject<Data::DLCShrine>::Render();
 
+        if(m_Legend->m_Show[IconButton::ButtonTypes::Lightroots])
+            MapObject<Data::Lightroot>::Render();
+
         if (m_Legend->m_Show[IconButton::ButtonTypes::Hinoxes])
             MapObject<Data::Hinox>::Render();
 
@@ -594,14 +660,20 @@ void Map::Render()
 
         if (m_Legend->m_Show[IconButton::ButtonTypes::Moldugas])
             MapObject<Data::Molduga>::Render();
-
+        if (m_Legend->m_Show[IconButton::ButtonTypes::Caves])
+            MapObject<Data::Cave>::Render();
+        if (m_Legend->m_Show[IconButton::ButtonTypes::Wells])
+            MapObject<Data::Well>::Render();
         if (m_Legend->m_Show[IconButton::ButtonTypes::Froxes])
             MapObject<Data::Frox>::Render();
         if(m_Legend->m_Show[IconButton::ButtonTypes::Gleeoks])
             MapObject<Data::Gleeok>::Render();
         if(m_Legend->m_Show[IconButton::ButtonTypes::FluxConstructs])
             MapObject<Data::FluxConstruct>::Render();
-
+        if(m_Legend->m_Show[IconButton::ButtonTypes::Wells])
+            MapObject<Data::Well>::Render();
+        if(m_Legend->m_Show[IconButton::ButtonTypes::Caves])
+            MapObject<Data::Cave>::Render();
         if (m_Legend->m_Show[IconButton::ButtonTypes::Locations])
         {
             for (int i = 0; i < Data::LocationsCount; i++)
@@ -689,6 +761,13 @@ void Map::Destory()
     delete[] m_Taluses;
     delete[] m_Moldugas;
     delete[] m_Locations;
+    delete[] m_Caves;
+    delete[] m_Wells;
+    delete[] m_Froxes;
+    delete[] m_Gleeoks;
+    delete[] m_FluxConstructs;
+
+
 
     delete m_Legend;
     delete m_NoSavefileDialog;
@@ -727,6 +806,9 @@ MapObject<Data::Molduga> *Map::m_Moldugas;
 MapObject<Data::FluxConstruct> *Map::m_FluxConstructs;
 MapObject<Data::Frox> *Map::m_Froxes;
 MapObject<Data::Gleeok> *Map::m_Gleeoks;
+MapObject<Data::Cave> *Map::m_Caves;
+MapObject<Data::Well> *Map::m_Wells;
+MapObject<Data::Lightroot> *Map::m_Lightroots;
 MapLocation *Map::m_Locations;
 
 Legend *Map::m_Legend;

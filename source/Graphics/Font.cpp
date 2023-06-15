@@ -187,7 +187,8 @@ glm::vec2 Font::RenderText(const std::string& text, glm::vec2 position, float sc
     glm::vec2 startPos(position.x, position.y);
     glm::vec2 textSize = glm::vec2(0.0f, 0.0f);
 
-    glm::vec2* characterPositions = new glm::vec2[text.length()](); 
+    glm::vec2* characterPositions = new glm::vec2[text.length()]();
+
 
     for (unsigned int i = 0; i < text.length(); i++)
     {
@@ -346,7 +347,6 @@ void Font::RenderBatch()
     for (auto &entry : m_CharsToRender)
     {
         std::vector<Text>& texts = entry.second;
-
         Character ch = m_Characters[entry.first];
 
         m_CharMesh.Clear();
@@ -354,6 +354,7 @@ void Font::RenderBatch()
         // Iterate through all texts
         for (unsigned int i = 0; i < texts.size(); i++)
         {
+
             Text text = texts[i];
 
             float w = ch.Size.x * text.scale;
@@ -384,6 +385,7 @@ void Font::RenderBatch()
         m_Shader.SetUniform("textColor", texts[0].color);
 
         m_CharMesh.Update();
+
         m_CharMesh.Render();
     }
 

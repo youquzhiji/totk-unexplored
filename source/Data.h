@@ -121,8 +121,8 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Location(uint32_t hash, const std::string &displayName, float x, float y) :
-                hash(hash), displayName(displayName), x(x), y(y)
+        Location(uint32_t hash, const std::string &displayName, float x, float y, float z, int layer) :
+                hash(hash), displayName(displayName), x(x), y(y),z(z), layer(layer)
         {};
     };
 
@@ -131,7 +131,7 @@ namespace Data
 
 
 
-    struct Caves
+    struct Cave
     {
         uint32_t hash;
         int layer;
@@ -139,12 +139,23 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Caves(uint32_t hash, float x, float y, float z, int layer) :
+        Cave(uint32_t hash, std::string name,  float x, float y, float z, int layer) :
                 hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
 
+    struct Well
+    {
+        uint32_t hash;
+        int layer;
+        float x = 0;
+        float y = 0;
+        float z = 0;
 
+        Well(uint32_t hash, std::string name, float x, float y, float z, int layer) :
+                hash(hash), x(x), y(y), z(z), layer(layer)
+        {};
+    };
 
     struct Chasm
     {
@@ -154,7 +165,7 @@ namespace Data
         float y = 0;
         float z = 0;
 
-        Chasm(uint32_t hash, float x, float y, float z, int layer) :
+        Chasm(uint32_t hash, std::string name,  float x, float y, float z, int layer) :
                 hash(hash), x(x), y(y), z(z), layer(layer)
         {};
     };
@@ -296,8 +307,14 @@ namespace Data
 
     DLCShrine *DLCShrineExists(uint32_t hash);
 
+    const int LightrootsCount = 120;
+    extern Lightroot Lightroots[LightrootsCount];
+
+    Lightroot *LightrootExists(uint32_t hash);
+
+
     // Create locations (coordinates are rounded)
-    const int LocationsCount = 187;
+    const int LocationsCount = 629;
     extern Location Locations[LocationsCount];
 
     Location *LocationExists(uint32_t hash);
@@ -331,4 +348,14 @@ namespace Data
     extern Molduga Moldugas[MoldugasCount];
 
     Molduga *MoldugaExists(uint32_t hash);
+
+    const int CavesCount = 147;
+    extern Cave Caves[CavesCount];
+
+    Cave *CaveExists(uint32_t hash);
+
+    const int WellsCount = 58;
+    extern Well Wells[WellsCount];
+
+    Well *WellExists(uint32_t hash);
 };

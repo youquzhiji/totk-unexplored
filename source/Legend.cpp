@@ -270,6 +270,21 @@ IconButton::IconButton(ButtonTypes type, glm::vec2 position, float width, float 
         break;
     case ShowCompleted:
         m_Text = "Show Completed";
+        break;
+    case Wells:
+        m_Text = "Wells";
+        iconPath = "romfs:/well.png";
+
+        break;
+    case Lightroots:
+        m_Text = "Lightroots";
+        iconPath = "romfs:/lightroot.png";
+        break;
+    case Caves:
+        m_Text = "Caves";
+        iconPath = "romfs:/cave.png";
+        break;
+
     
     default:
         break;
@@ -354,6 +369,16 @@ void IconButton::Render()
         break;
     case Locations:
         countString = std::to_string(SavefileIO::visitedLocations.size()) + "/" + std::to_string(Data::LocationsCount);
+        break;
+
+    case Wells:
+        countString = std::to_string(SavefileIO::visitedWells.size()) + "/" + std::to_string(Data::WellsCount);
+        break;
+    case Lightroots:
+        countString = std::to_string(SavefileIO::foundLightroots.size()) + "/" + std::to_string(Data::LightrootsCount);
+        break;
+    case Caves:
+        countString = std::to_string(SavefileIO::visitedCaves.size()) + "/" + std::to_string(Data::CavesCount);
         break;
 
 

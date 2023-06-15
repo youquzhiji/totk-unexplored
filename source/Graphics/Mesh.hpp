@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <mutex>
-
+#include "../Log.h"
 #include <cstdint>
 
 #include <glm/vec3.hpp>
@@ -224,7 +224,6 @@ void Mesh<VertexT>::Render()
 
 	BindVao();
 	if (m_Texture) m_Texture->Bind();
-
 	// Try to use the indices, but if they aren't set use the vertices count instead
 	if (!m_Indices.empty())
 		glDrawElements(GL_TRIANGLES, (GLsizei)m_Indices.size(), GL_UNSIGNED_SHORT, 0);

@@ -436,11 +436,11 @@ void SavefileIO::CopySavefiles()
     for (unsigned int i = 0; i < savefileFolders.size(); i++)
     {
         // Create the destination folder if it doesn't exist
-        if (!DirectoryExists(savesFolder +"slot_0"+ savefileFolders[i]))
-            mkdir(std::string(savesFolder +"slot_0"+ savefileFolders[i]).c_str(), 0777);
+        if (!DirectoryExists(savesFolder +"/slot_0"+ savefileFolders[i]))
+            mkdir(std::string(savesFolder +"/slot_0"+ savefileFolders[i]).c_str(), 0777);
 
         // Copy the savefiles
-        std::string target = savesFolder + "slot_0" + savefileFolders[i] + "/progress.sav";
+        std::string target = savesFolder + "/slot_0" + savefileFolders[i] + "/progress.sav";
 
         CopyFile("save:/slot_0"+ savefileFolders[i] + "/progress.sav", target);
 
@@ -543,6 +543,13 @@ bool SavefileIO::ParseFile(const char *filepath)
     undefeatedFroxes.clear();
     defeatedFluxConstructs.clear();
     undefeatedFluxConstructs.clear();
+    visitedWells.clear();
+    unexploredWells.clear();
+    visitedCaves.clear();
+    unexploredCaves.clear();
+    foundLightroots.clear();
+    missingLightroots.clear();
+
 
     if (!FileExists(filepath))
         return false;
@@ -569,14 +576,17 @@ bool SavefileIO::ParseFile(const char *filepath)
     {
         // Read the korok or location hash ('id')
         uint32_t hashValue = ReadU32(buffer, offset);
-
+        bool found = false;
         // Check if a korok with the hash exists
         Data::Korok *korok = Data::KorokExists(hashValue);
         if (korok)
         {
+            if(korok->zeldaDungeonId>99)
             // Read the 4 bytes after the hash. If it's not 0, then the seed has been found.
-            bool found = ReadU32(buffer, offset + 4) != 0;
-
+                 found = ReadU32(buffer, offset + 4) != 0;
+            else
+                //escort koroks are stored as strings, so we need to use murmurhash3 to get the hash value
+                 found = ReadU32(buffer, offset + 4) == 1654019904;
             found ? foundKoroks.push_back(korok) : missingKoroks.push_back(korok);
         }
         
@@ -589,6 +599,15 @@ bool SavefileIO::ParseFile(const char *filepath)
             bool defeated = ReadU32(buffer, offset + 4) != 0;
 
             defeated ? foundShrines.push_back(shrine) : missingShrines.push_back(shrine);
+        }
+
+        Data::Lightroot *lightroot = Data::LightrootExists(hashValue);
+        if (lightroot)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the shrine has been found.
+            bool found = ReadU32(buffer, offset + 4) != 0;
+
+            found ? foundLightroots.push_back(lightroot) : missingLightroots.push_back(lightroot);
         }
 
         // Check for dlc shrines
@@ -610,7 +629,22 @@ bool SavefileIO::ParseFile(const char *filepath)
 
             visited ? visitedLocations.push_back(location) : unexploredLocations.push_back(location);
         }
+        Data::Well *well = Data::WellExists(hashValue);
+        if (well)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the location has been visited.
+            bool visited = ReadU32(buffer, offset + 4) != 0;
 
+            visited ? visitedWells.push_back(well) : unexploredWells.push_back(well);
+        }
+        Data::Cave *cave = Data::CaveExists(hashValue);
+        if (cave)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the location has been visited.
+            bool visited = ReadU32(buffer, offset + 4) != 0;
+
+            visited ? visitedCaves.push_back(cave) : unexploredCaves.push_back(cave);
+        }
         // Check if a hinox with the hash exists
         Data::Hinox *hinox = Data::HinoxExists(hashValue);
         if (hinox)
@@ -702,6 +736,12 @@ std::vector<Data::Frox *> SavefileIO::defeatedFroxes;
 std::vector<Data::Frox *> SavefileIO::undefeatedFroxes;
 std::vector<Data::FluxConstruct *> SavefileIO::defeatedFluxConstructs;
 std::vector<Data::FluxConstruct *> SavefileIO::undefeatedFluxConstructs;
+std::vector<Data::Cave *> SavefileIO::visitedCaves;
+std::vector<Data::Cave *> SavefileIO::unexploredCaves;
+std::vector<Data::Well *> SavefileIO::visitedWells;
+std::vector<Data::Well *> SavefileIO::unexploredWells;
+std::vector<Data::Lightroot *> SavefileIO::foundLightroots;
+std::vector<Data::Lightroot *> SavefileIO::missingLightroots;
 
 u64 SavefileIO::AccountUid1;
 u64 SavefileIO::AccountUid2;

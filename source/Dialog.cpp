@@ -48,8 +48,8 @@ Dialog::Dialog(glm::vec2 position, float width, float height, DialogType type)
         m_ExitButton->m_Button.m_Color = glm::vec4(197, 77, 77, 0.8f);
 
         m_SelectedButton = 0;
-        m_Title = "BotW is running, can't load save";
-        m_Description = "Please run this app at least once without BotW running";
+        m_Title = "Totk is running, can't load save";
+        m_Description = "Please run this app at least once without Totk running";
         m_Description2 = "After that you can use it while playing.";
     }
     else if (m_Type == DialogType::MasterModeChoose)

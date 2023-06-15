@@ -75,6 +75,9 @@ namespace Map
     extern MapObject<Data::Gleeok>* m_Gleeoks;
     extern MapObject<Data::Frox>* m_Froxes;
     extern MapObject<Data::FluxConstruct>* m_FluxConstructs;
+    extern MapObject<Data::Cave>* m_Caves;
+    extern MapObject<Data::Well>* m_Wells;
+    extern MapObject<Data::Lightroot>* m_Lightroots;
     extern MapLocation* m_Locations;
 
     extern Legend* m_Legend;
