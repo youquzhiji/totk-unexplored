@@ -284,7 +284,10 @@ IconButton::IconButton(ButtonTypes type, glm::vec2 position, float width, float 
         m_Text = "Caves";
         iconPath = "romfs:/cave.png";
         break;
-
+    case Chasms:
+        m_Text = "Chasms";
+        iconPath = "romfs:/chasm.png";
+        break;
     
     default:
         break;
@@ -379,6 +382,9 @@ void IconButton::Render()
         break;
     case Caves:
         countString = std::to_string(SavefileIO::visitedCaves.size()) + "/" + std::to_string(Data::CavesCount);
+        break;
+    case Chasms:
+        countString = std::to_string(SavefileIO::foundChasms.size()) + "/" + std::to_string(Data::ChasmsCount);
         break;
 
 

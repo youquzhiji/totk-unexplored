@@ -35,6 +35,8 @@ namespace SavefileIO
     extern std::vector<Data::Well*> unexploredWells;
     extern std::vector<Data::Lightroot*> foundLightroots;
     extern std::vector<Data::Lightroot*> missingLightroots;
+    extern std::vector<Data::Chasm*> foundChasms;
+    extern std::vector<Data::Chasm*> missingChasms;
 
     bool LoadGamesave(bool loadMasterMode = false, bool chooseProfile = false);
 

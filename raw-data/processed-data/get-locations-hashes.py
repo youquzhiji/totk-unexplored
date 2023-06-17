@@ -31,17 +31,9 @@ if __name__ == '__main__':
         data = json.load(f)
         with open(f'locations_{layer}.txt', 'a') as f:
             for item in data:
-                if(str(item["id"]).startswith('MapRegion_')):
-                    continue
-                if(str(item["id"]).startswith('MapArea_')):
-                    continue
-                if(str(item["id"]).startswith('Shop')):
-                    continue
-                if(((str(item["id"])).find('HyruleCastle_Hall') == -1) and ((str(item["id"])).find('HyruleCastle_Room') == -1)):
-                    id = remove_underscore_numbers(item["id"])
-                else:
-                    id = item["id"]
-                if id in processed:
+                id = item["id"]
+                name=item["name"]
+                if name in processed:
                     continue
                 hash=f'IsVisitLocation.{id}'
                 found_row = df.loc[df.iloc[:, 2] == hash, df.columns[0]].tolist()
@@ -51,6 +43,6 @@ if __name__ == '__main__':
                     f.write(f'Data::Location({converted}, \"{item["name"]}\", {float(item["x"])}f, {float(item["y"])}f, {float(item["z"])},{layer}),\n')
                     processed.append(id)
                 else:
-                    print(f'Could not find {id}')
+                    print(f'Could not find {id} {name}')
     print(f'Processed {len(processed)} locations')
 

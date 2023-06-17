@@ -549,6 +549,8 @@ bool SavefileIO::ParseFile(const char *filepath)
     unexploredCaves.clear();
     foundLightroots.clear();
     missingLightroots.clear();
+    foundChasms.clear();
+    missingChasms.clear();
 
 
     if (!FileExists(filepath))
@@ -629,6 +631,15 @@ bool SavefileIO::ParseFile(const char *filepath)
 
             visited ? visitedLocations.push_back(location) : unexploredLocations.push_back(location);
         }
+        Data::Chasm *chasm = Data::ChasmExists(hashValue);
+        if (chasm)
+        {
+            // Read the 4 bytes after the hash. If it is not 0, then the location has been visited.
+            bool visited = ReadU32(buffer, offset + 4) != 0;
+
+            visited ? foundChasms.push_back(chasm) : missingChasms.push_back(chasm);
+        }
+
         Data::Well *well = Data::WellExists(hashValue);
         if (well)
         {
@@ -742,6 +753,9 @@ std::vector<Data::Well *> SavefileIO::visitedWells;
 std::vector<Data::Well *> SavefileIO::unexploredWells;
 std::vector<Data::Lightroot *> SavefileIO::foundLightroots;
 std::vector<Data::Lightroot *> SavefileIO::missingLightroots;
+std::vector<Data::Chasm *> SavefileIO::foundChasms;
+std::vector<Data::Chasm *> SavefileIO::missingChasms;
+
 
 u64 SavefileIO::AccountUid1;
 u64 SavefileIO::AccountUid2;

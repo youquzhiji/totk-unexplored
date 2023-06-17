@@ -59,7 +59,6 @@ Data::Location(3616119199, "Wellspring of Courage", 903.536072f, -2488.26001f, -
 Data::Location(728175840, "Wellspring of Power", 3733.14307f, 2562.80298f, -351.088013,-1),
 Data::Location(2482110948, "Secret Spring of Revival", -1098.55505f, -1898.03503f, -744.30719,-1),
 Data::Location(2362260466, "Gloom's Lair", -249.218201f, 1041.27197f, -1546.88501,-1),
-Data::Location(1719874475, "Gloom's Origin", -249.218201f, 921.272522f, -2476.88501,-1),
 Data::Location(323894096, "Gloom's Approach", -243.453506f, 1007.82397f, -852.801697,-1),
 Data::Location(1991171870, "Forgotten Foundation", -344.218201f, 876.272522f, -1286.88501,-1),
 Data::Location(4270990516, "Imprisoning Chamber", -271.614014f, 1046.31799f, -1326.08398,-1),

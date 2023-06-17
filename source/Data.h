@@ -314,10 +314,15 @@ namespace Data
 
 
     // Create locations (coordinates are rounded)
-    const int LocationsCount = 629;
+    const int LocationsCount = 261;
     extern Location Locations[LocationsCount];
 
     Location *LocationExists(uint32_t hash);
+
+    const int ChasmsCount = 36;
+    extern Chasm Chasms[ChasmsCount];
+
+    Chasm *ChasmExists(uint32_t hash);
 
     const int FluxConstructsCount = 35;
     extern FluxConstruct FluxConstructs[FluxConstructsCount];

@@ -18,11 +18,13 @@ public:
         Froxes = 6,
         Gleeoks = 7,
         FluxConstructs = 8,
-        Locations = 11,
+
         Caves = 9,
         Wells = 10,
-        ShowCompleted = 12,
-        Count=13,
+        Chasms = 11,
+        Locations = 12,
+        ShowCompleted = 13,
+        Count=14,
     };
 
 public:

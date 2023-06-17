@@ -861,8 +861,8 @@ def find_hash(x, y, z, hashes, coords):
 
 
 if __name__ == '__main__':
-    print(len(CAVE))
-    print(len(CAVE_STATUS))
+    print(len(CHASM))
+    print(len(CHASM_STATUS))
     parser = argparse.ArgumentParser()
     parser.add_argument('file', help='json file to convert')
     parser.add_argument('layer', help='layer')

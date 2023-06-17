@@ -78,6 +78,7 @@ namespace Map
     extern MapObject<Data::Cave>* m_Caves;
     extern MapObject<Data::Well>* m_Wells;
     extern MapObject<Data::Lightroot>* m_Lightroots;
+    extern MapObject<Data::Chasm>* m_Chasms;
     extern MapLocation* m_Locations;
 
     extern Legend* m_Legend;

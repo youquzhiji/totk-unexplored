@@ -99,6 +99,9 @@ void Map::Init()
     m_Lightroots = new MapObject<Data::Lightroot>[Data::LightrootsCount];
     MapObject<Data::Lightroot>::Init("romfs:/lightroot.png", Data::LightrootsCount);
 
+    m_Chasms = new MapObject<Data::Chasm>[Data::ChasmsCount];
+    MapObject<Data::Chasm>::Init("romfs:/chasm.png", Data::ChasmsCount);
+
     // Create locations
     m_Locations = new MapLocation[Data::LocationsCount];
     UpdateMapObjects(0);
@@ -295,6 +298,20 @@ void Map::UpdateMapObjects(int focused_layer)
                 SavefileIO::visitedWells.begin(),
                 SavefileIO::visitedWells.end(),
                 &Data::Wells[i]) != SavefileIO::visitedWells.end();
+    }
+
+    for(int i=0; i<Data::ChasmsCount; i++){
+        if(Data::Chasms[i].layer != focused_layer)
+        {
+            m_Chasms[i].m_FocusedLayer = false;
+            continue;
+        }
+        m_Chasms[i].m_FocusedLayer = true;
+        m_Chasms[i].m_Position = glm::vec2(Data::Chasms[i].x, Data::Chasms[i].y) * MapScale;
+        m_Chasms[i].m_Found = std::find(
+                SavefileIO::foundChasms.begin(),
+                SavefileIO::foundChasms.end(),
+                &Data::Chasms[i]) != SavefileIO::foundChasms.end();
     }
 
     for(int i =0;i<Data::CavesCount;i++){
@@ -587,6 +604,8 @@ void Map::Update()
             m_Wells[i].Update(i == 0);
         for(int i=0; i<Data::CavesCount; i++)
             m_Caves[i].Update(i == 0);
+        for(int i=0; i<Data::ChasmsCount; i++)
+            m_Chasms[i].Update(i == 0);
         for (int i = 0; i < Data::LocationsCount; i++)
             m_Locations[i].Update();
 
@@ -674,6 +693,8 @@ void Map::Render()
             MapObject<Data::Well>::Render();
         if(m_Legend->m_Show[IconButton::ButtonTypes::Caves])
             MapObject<Data::Cave>::Render();
+        if(m_Legend->m_Show[IconButton::ButtonTypes::Chasms])
+            MapObject<Data::Chasm>::Render();
         if (m_Legend->m_Show[IconButton::ButtonTypes::Locations])
         {
             for (int i = 0; i < Data::LocationsCount; i++)
@@ -766,6 +787,7 @@ void Map::Destory()
     delete[] m_Froxes;
     delete[] m_Gleeoks;
     delete[] m_FluxConstructs;
+    delete[] m_Chasms;
 
 
 
@@ -809,6 +831,7 @@ MapObject<Data::Gleeok> *Map::m_Gleeoks;
 MapObject<Data::Cave> *Map::m_Caves;
 MapObject<Data::Well> *Map::m_Wells;
 MapObject<Data::Lightroot> *Map::m_Lightroots;
+MapObject<Data::Chasm> *Map::m_Chasms;
 MapLocation *Map::m_Locations;
 
 Legend *Map::m_Legend;
