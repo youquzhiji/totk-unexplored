@@ -597,8 +597,8 @@ bool SavefileIO::ParseFile(const char *filepath)
         Data::Shrine *shrine = Data::ShrineExists(hashValue);
         if (shrine)
         {
-            // Read the 4 bytes after the hash. If it is not 0, then the shrine has been found.
-            bool defeated = ReadU32(buffer, offset + 4) != 0;
+
+            bool defeated = ReadU32(buffer, offset + 4) == 1654019904;
 
             defeated ? foundShrines.push_back(shrine) : missingShrines.push_back(shrine);
         }
@@ -607,7 +607,7 @@ bool SavefileIO::ParseFile(const char *filepath)
         if (lightroot)
         {
             // Read the 4 bytes after the hash. If it is not 0, then the shrine has been found.
-            bool found = ReadU32(buffer, offset + 4) != 0;
+            bool found = ReadU32(buffer, offset + 4) == 404286466;
 
             found ? foundLightroots.push_back(lightroot) : missingLightroots.push_back(lightroot);
         }
